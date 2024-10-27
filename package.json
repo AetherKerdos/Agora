@@ -1,0 +1,23 @@
+{
+  "name": "agora",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.ts",
+  "scripts": {
+    "start": "npx hardhat node",
+    "test": "npx hardhat test",
+    "format": "npx prettier --write '**/*.{js,ts,json,sol}'",
+    "prepare": "husky",
+    "coverage": "npx hardhat coverage",
+    "compile": "npx hardhat compile"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.15",
+    "husky": "^9.1.6",
+    "prettier": "^3.3.3",
+    "prettier-plugin-solidity": "^1.4.1"
+  }
+}

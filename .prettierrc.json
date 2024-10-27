@@ -1,0 +1,12 @@
+{
+    "semi": true,
+    "singleQuote": false,
+    "trailingComma": "none",
+    "tabWidth": 4,
+    "useTabs": false,
+    "bracketSpacing": true,
+    "printWidth": 205,
+    "arrowParens": "always",
+    "endOfLine": "auto",
+    "plugins": ["prettier-plugin-solidity"]
+}
