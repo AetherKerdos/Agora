@@ -1,13 +1,10 @@
-# Sample Hardhat Project
+# Маржинальная торговля
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
+## Описание функциональности:
+1. **Заемный капитал**: Пользователь может взять заемный капитал, используя свои средства как обеспечение. Например, если пользователь предоставляет $100, он может взять в долг до 10 раз больше, т.е., $1,000. Общая стоимость на его аккаунте составит $1,100.
+2. **Обеспечение и уровень ликвидации**: Общее соотношение долга к стоимости активов должно быть поддержано выше 105%. Если оно падает ниже, контракт должен автоматически ликвидировать позицию (продать активы, вернуть заемные средства в пул ликвидности, а остаток отправить пользователю).
+3. **Торговля на Uniswap**: Заемный капитал доступен только для торговых операций на Uniswap.
 
-Try running some of the following tasks:
-
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.ts
-```
+## Основные требования:
+- Поддержка функционала ликвидации при достижении уровня обеспечения 105%
+- Поддержка торговли на Uniswap, ограниченной определенными токенами (WETH, WBTC, USDC)
