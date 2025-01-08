@@ -65,6 +65,11 @@ contract MarginAccount is Ownable {
         emit CollateralDeposited(msg.sender, token, amount);
     }
 
+    function addAcc(address _address, IERC20 token, uint256 Col, uint256 _Debt) public {
+        accounts[_address].collateral[token] = Col;
+        accounts[_address].debt[token] = _Debt;
+    }
+
     function withdrawCollateral(IERC20 token, uint256 amount) external {
         require(amount > 0, "Amount must be greater than 0.");
         require(accounts[msg.sender].collateral[token] >= amount, "Insufficient collateral.");
