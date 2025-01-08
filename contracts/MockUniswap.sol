@@ -36,7 +36,7 @@ contract MockUniswap {
         uint256 amountIn,
         uint256 amountOutMin,
         uint256 deadline
-    ) external isSupportedTokens(tokenIn, tokenOut) returns (uint256[] memory amounts) {
+    ) external isSupportedTokens(tokenIn, tokenOut) returns (uint256) {
         require(deadline >= block.timestamp, "Deadline passed.");
 
         uint256 amountOut = (amountIn * tokenPrices[tokenIn]) / tokenPrices[tokenOut];
@@ -48,9 +48,7 @@ contract MockUniswap {
 
         emit Swap(msg.sender, tokenIn, tokenOut, amountIn, amountOut);
 
-        amounts = new uint256[](2);
-        amounts[0] = amountIn;
-        amounts[1] = amountOut;
+        return amountOut;
     }
 
     function getAmountOut(
@@ -70,8 +68,13 @@ contract MockUniswap {
     }
 
     function getPrice(address tokenIn, address tokenOut) external view isSupportedTokens(tokenIn, tokenOut) returns (uint256) {
-
         uint256 price = (tokenPrices[tokenIn] * 1e18) / tokenPrices[tokenOut];
+
+        return price;
+    }
+
+    function getPriceInUSDC(address tokenIn) external view isSupportedTokens(tokenIn, 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48) returns (uint256) {
+        uint256 price = (tokenPrices[tokenIn] * 1e18) / tokenPrices[0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48];
 
         return price;
     }
