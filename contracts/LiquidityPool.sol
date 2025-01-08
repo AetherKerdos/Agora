@@ -38,6 +38,8 @@ contract LiquidityPool is AccessControl {
     constructor(address _token, address _marginAccount) {
         token = IERC20(_token);
         marginAccount = MarginAccount(_marginAccount);
+
+        _grantRole(BORROWER_ROLE, _marginAccount);
     }
 
     function deposit(uint256 amount) external {
