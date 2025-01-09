@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./MarginAccount.sol";
 
 contract LiquidityPool is AccessControl {
-
     struct Provider {
         uint256 share;
         uint256 earnings;
@@ -88,14 +87,14 @@ contract LiquidityPool is AccessControl {
 
         totalEarnings += earnings;
 
-        for (uint256 i = 0; i < providerAddresses.length; i ++) {
+        for (uint256 i = 0; i < providerAddresses.length; i++) {
             address provider = providerAddresses[i];
             uint256 providerEarnings = (earnings * providers[provider].share) / totalShares;
             providers[provider].earnings += providerEarnings;
         }
     }
 
-    function withdrawLiquidity(uint256 amount) external {        
+    function withdrawLiquidity(uint256 amount) external {
         require(amount > 0, "Amount must be greater than 0.");
         require(providers[msg.sender].earnings >= amount, "Insufficient share.");
 
@@ -106,7 +105,7 @@ contract LiquidityPool is AccessControl {
         token.transfer(msg.sender, amount);
 
         if (providers[msg.sender].share == 0) {
-            for (uint256 i = 0; i < providerAddresses.length; i ++) {
+            for (uint256 i = 0; i < providerAddresses.length; i++) {
                 if (providerAddresses[i] == msg.sender) {
                     providerAddresses[i] = providerAddresses[providerAddresses.length - 1];
                     providerAddresses.pop();
@@ -118,7 +117,7 @@ contract LiquidityPool is AccessControl {
         emit LiquidityWithdrawn(msg.sender, token, amount);
     }
 
-    function withdrawEarnings(uint256 amount) external {        
+    function withdrawEarnings(uint256 amount) external {
         require(amount > 0, "Amount must be greater than 0.");
         require(providers[msg.sender].earnings >= amount, "Insufficient earings.");
 

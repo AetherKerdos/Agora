@@ -60,7 +60,7 @@ async function main() {
     const tokens = [
         "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", // USDC
         "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2", // WETH
-        "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599", // WBTC
+        "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599" // WBTC
     ];
 
     // Deploy 3 LiquidityPool contracts, each with a different token
@@ -77,9 +77,7 @@ async function main() {
     }
 
     // Extract the addresses of the deployed liquidity pools
-    const liquidityPoolAddresses = await Promise.all(
-        liquidityPools.map(async (pool) => await pool.getAddress())
-    );
+    const liquidityPoolAddresses = await Promise.all(liquidityPools.map(async (pool) => await pool.getAddress()));
 
     // Deploy MarginAccount
     console.log("Deploying MarginAccount...");
@@ -95,7 +93,7 @@ async function main() {
     const addresses = {
         MockUniswap: await mockUniswap.getAddress(),
         LiquidityPools: liquidityPoolAddresses,
-        MarginAccount: await marginAccount.getAddress(),
+        MarginAccount: await marginAccount.getAddress()
     };
     require("fs").writeFileSync("deployed-addresses.json", JSON.stringify(addresses, null, 2));
     console.log("Contract addresses saved to deployed-addresses.json");

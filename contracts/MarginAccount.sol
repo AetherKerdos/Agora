@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./LiquidityPool.sol";
 import "./MockUniswap.sol";
 
 contract MarginAccount is Ownable {
-
     struct Account {
         mapping(IERC20 => uint256) collateral;
         mapping(IERC20 => uint256) debt;
@@ -36,7 +35,7 @@ contract MarginAccount is Ownable {
         require(_tokens.length == _pools.length, "Mismatched tokens and pools.");
         require(_mockUniswap != address(0), "Invalid address");
 
-        for (uint256 i = 0; i < _tokens.length; i ++) {
+        for (uint256 i = 0; i < _tokens.length; i++) {
             require(_tokens[i] != address(0), "Invalid token address");
             require(_pools[i] != address(0), "Invalid pool address");
         }
@@ -44,7 +43,7 @@ contract MarginAccount is Ownable {
         supportedTokens = _tokens;
         mockUniswap = MockUniswap(_mockUniswap);
 
-        for (uint256 i = 0; i < supportedTokens.length; i ++) {
+        for (uint256 i = 0; i < supportedTokens.length; i++) {
             tokenToPool[IERC20(_tokens[i])] = LiquidityPool(_pools[i]);
         }
     }
@@ -101,7 +100,8 @@ contract MarginAccount is Ownable {
         emit Borrowed(msg.sender, token, amount);
     }
 
-    function repay(IERC20 token, uint256 amount) external { // wrong implementation
+    function repay(IERC20 token, uint256 amount) external {
+        // wrong implementation
         require(amount > 0, "Amount must be greater than 0");
         require(accounts[msg.sender].debt[token] >= amount, "Insufficient debt.");
 
@@ -120,13 +120,14 @@ contract MarginAccount is Ownable {
     // liquidate account if CDR < 105%
     // CDR - Collateral to Debt Ratio
     // Collateral = depositedAssets + borrowedAssets
-    function liquidate(address trader) external { // wrong implementation
+    function liquidate(address trader) external {
+        // wrong implementation
         uint256 totalCollateralValue = getTotalCollateralValue(trader); // USDC
         uint256 totalDebtValue = getTotalDebtValue(trader); // USDC
 
         require((totalCollateralValue * 100) / totalDebtValue <= 105, "CDR must be <= 105%.");
 
-        for (uint256 i = 0; i < supportedTokens.length; i ++) {
+        for (uint256 i = 0; i < supportedTokens.length; i++) {
             IERC20 token = IERC20(supportedTokens[i]);
 
             uint256 debt = accounts[trader].debt[token];
@@ -148,12 +149,12 @@ contract MarginAccount is Ownable {
         }
 
         if (totalDebtValue > 0) {
-            for (uint256 i = 0; i < supportedTokens.length; i ++) {
+            for (uint256 i = 0; i < supportedTokens.length; i++) {
                 IERC20 debtToken = IERC20(supportedTokens[i]);
                 uint256 remainingDebt = accounts[trader].debt[debtToken];
 
                 if (remainingDebt > 0) {
-                    for (uint256 j = 0; j < supportedTokens.length; j ++) {
+                    for (uint256 j = 0; j < supportedTokens.length; j++) {
                         if (i == j) {
                             continue;
                         }
@@ -167,13 +168,7 @@ contract MarginAccount is Ownable {
 
                             uint256 collateralToUse = (collateralValue >= debtValue) ? debtValue : collateralValue;
 
-                            uint256 amountOut = mockUniswap.swapTokens(
-                                address(collateralToken),
-                                address(debtToken),
-                                remainingCollateral,
-                                collateralToUse,
-                                block.timestamp + 300
-                            );
+                            uint256 amountOut = mockUniswap.swapTokens(address(collateralToken), address(debtToken), remainingCollateral, collateralToUse, block.timestamp + 300);
 
                             debtToken.approve(address(tokenToPool[debtToken]), amountOut);
 
@@ -203,7 +198,7 @@ contract MarginAccount is Ownable {
     }
 
     function isSupportedToken(address token) public view returns (bool) {
-        for (uint256 i = 0; i < supportedTokens.length; i ++) {
+        for (uint256 i = 0; i < supportedTokens.length; i++) {
             if (supportedTokens[i] == token) {
                 return true;
             }
@@ -215,12 +210,12 @@ contract MarginAccount is Ownable {
     function getTotalCollateralValue(address trader) public view returns (uint256) {
         uint256 totalValue = 0;
 
-        for (uint256 i = 0; i < supportedTokens.length; i ++) {
+        for (uint256 i = 0; i < supportedTokens.length; i++) {
             IERC20 token = IERC20(supportedTokens[i]);
 
             uint256 collateral = accounts[trader].collateral[token];
 
-            if (collateral > 0) {                
+            if (collateral > 0) {
                 totalValue += (collateral * mockUniswap.getPriceInUSDC(address(token))) / 1e18;
             }
         }
@@ -231,7 +226,7 @@ contract MarginAccount is Ownable {
     function getTotalDebtValue(address trader) public view returns (uint256) {
         uint256 totalValue = 0;
 
-        for (uint256 i = 0; i < supportedTokens.length; i ++) {
+        for (uint256 i = 0; i < supportedTokens.length; i++) {
             IERC20 token = IERC20(supportedTokens[i]);
 
             uint256 debt = accounts[trader].debt[token];
@@ -243,5 +238,4 @@ contract MarginAccount is Ownable {
 
         return totalValue;
     }
-
 }
